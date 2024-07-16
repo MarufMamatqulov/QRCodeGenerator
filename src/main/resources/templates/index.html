@@ -2,10 +2,73 @@
 <html>
 <head>
     <title>QR Code Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 300px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        label {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            box-sizing: border-box;
+        }
+        button[type="submit"], button[type="button"] {
+            background-color: #1c56ba;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button[type="submit"]:hover, button[type="button"]:hover {
+            background-color: #45a049;
+        }
+        #qrcode {
+            margin-top: 20px;
+        }
+        #downloadBtnContainer {
+            margin-top: 20px;
+            text-align: center;
+        }
+        #downloadBtn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
 </head>
 <body>
 <h1>QR Code Generator</h1>
-<form action="/generateQRCode" method="get">
+<form id="qrForm">
     <label for="text">Text:</label>
     <input type="text" id="text" name="text" required>
     <label for="width">Width:</label>
@@ -17,10 +80,13 @@
 <div id="qrcode">
     <!-- This is where the image will be displayed -->
 </div>
+<div id="downloadBtnContainer">
+    <button id="downloadBtn" type="button" style="display: none;">Download QR Code</button>
+</div>
 
-<!-- JavaScript to display the image -->
+<!-- JavaScript to generate QR code and handle download -->
 <script>
-    document.querySelector('form').addEventListener('submit', function(event) {
+    document.getElementById('qrForm').addEventListener('submit', function(event) {
         event.preventDefault();
         var text = document.getElementById('text').value;
         var width = document.getElementById('width').value;
@@ -35,7 +101,25 @@
                 var url = URL.createObjectURL(xhr.response); // Create object URL from the response blob
                 var img = document.createElement('img');
                 img.src = url;
+                img.style.width = width + 'px'; // Set image width
+                img.style.height = height + 'px'; // Set image height
+                document.getElementById('qrcode').innerHTML = ''; // Clear previous image
                 document.getElementById('qrcode').appendChild(img);
+
+                // Show download button
+                var downloadBtn = document.getElementById('downloadBtn');
+                downloadBtn.style.display = 'block';
+                downloadBtn.onclick = function() {
+                    var a = document.createElement('a');
+                    document.body.appendChild(a);
+                    a.style = 'display: none';
+                    var blob = xhr.response;
+                    var url = window.URL.createObjectURL(blob);
+                    a.href = url;
+                    a.download = 'qrcode.png';
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                };
             }
         };
 
