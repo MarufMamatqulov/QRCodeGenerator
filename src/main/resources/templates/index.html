@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>QR Code Generator</title>
+</head>
+<body>
+<h1>QR Code Generator</h1>
+<form action="/generateQRCode" method="get">
+    <label for="text">Text:</label>
+    <input type="text" id="text" name="text" required>
+    <label for="width">Width:</label>
+    <input type="number" id="width" name="width" value="200" required>
+    <label for="height">Height:</label>
+    <input type="number" id="height" name="height" value="200" required>
+    <button type="submit">Generate QR Code</button>
+</form>
+<div id="qrcode">
+    <!-- This is where the image will be displayed -->
+</div>
+
+<!-- JavaScript to display the image -->
+<script>
+    document.querySelector('form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        var text = document.getElementById('text').value;
+        var width = document.getElementById('width').value;
+        var height = document.getElementById('height').value;
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/generateQRCode?text=' + encodeURIComponent(text) + '&width=' + width + '&height=' + height);
+        xhr.responseType = 'blob'; // Specify the response type as blob
+
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                var url = URL.createObjectURL(xhr.response); // Create object URL from the response blob
+                var img = document.createElement('img');
+                img.src = url;
+                document.getElementById('qrcode').appendChild(img);
+            }
+        };
+
+        xhr.send();
+    });
+</script>
+</body>
+</html>
