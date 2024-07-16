@@ -1,5 +1,5 @@
 # QRCodeGenerator
-QR Code Generator
+QR Code Generator  Java/Spring Boot 
 A simple QR Code Generator application built with Java using Spring Boot and Google ZXing library.
 
 Table of Contents
